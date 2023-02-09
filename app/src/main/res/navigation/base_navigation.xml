@@ -2,16 +2,21 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/base_navigation"
-    app:startDestination="@id/coursesFragment">
+    app:startDestination="@id/classesFragment">
 
     <fragment
         android:id="@+id/coursesFragment"
         android:name="com.example.studentattendance.ui.courses.CoursesFragment"
-        android:label="CoursesFragment" />
+        android:label="Courses Fragment" />
 
     <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.example.studentattendance.ui.settings.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:id="@+id/classesFragment"
+        android:name="com.example.studentattendance.ui.classes.ClassesFragment"
+        android:label="Classes Fragment" />
+
+    <fragment
+        android:id="@+id/statisticsFragment"
+        android:name="com.example.studentattendance.ui.statistics.StatisticsFragment"
+        android:label="Statistics Fragment" />
 
 </navigation>

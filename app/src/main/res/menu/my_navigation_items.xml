@@ -3,12 +3,17 @@
 
     <item
         android:id="@+id/coursesFragment"
-        android:icon="@drawable/ic_search"
-        android:title="@string/menu_search" />
+        android:icon="@drawable/ic_graduation"
+        android:title="@string/menu_courses" />
 
     <item
-        android:id="@+id/settingsFragment"
-        android:icon="@drawable/ic_person"
-        android:title="@string/menu_person" />
+        android:id="@+id/classesFragment"
+        android:icon="@drawable/ic_to_do"
+        android:title="@string/menu_classes" />
+
+    <item
+        android:id="@+id/statisticsFragment"
+        android:icon="@drawable/ic_graph_line"
+        android:title="@string/menu_statistics" />
 
 </menu>
