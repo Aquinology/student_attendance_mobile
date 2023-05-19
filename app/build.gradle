@@ -1,0 +1,65 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.example.attendance'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.example.attendance"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.1"
+    }
+}
+
+dependencies {
+
+    def material_version = "1.9.0"
+    def material3_version = "1.1.0"
+    def ui_tooling_version = "1.4.3"
+    def activity_compose_version = "1.7.1"
+    def navigation_compose_version = "2.6.0-rc01"
+
+    // Material components
+    implementation("com.google.android.material:material:$material_version")
+
+    // Material Design 3
+    implementation("androidx.compose.material3:material3:$material3_version")
+
+    // Android Studio Preview
+    implementation("androidx.compose.ui:ui-tooling:$ui_tooling_version")
+
+    // Integration with activities
+    implementation("androidx.activity:activity-compose:$activity_compose_version")
+
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:$navigation_compose_version")
+
+    // Add window size utils
+    implementation("androidx.compose.material3:material3-window-size-class")
+}

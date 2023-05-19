@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Attendance</string>
+
+    <!-- Login Screen -->
+    <string name="login_title">Login</string>
+    <string name="login_email">E-mail</string>
+    <string name="login_password">Password</string>
+
+    <!-- Courses Screen -->
+    <string name="courses_title">Courses</string>
+
+    <!-- Classes Screen -->
+    <string name="classes_title">Classes</string>
+
+    <!-- Classes Today Screen -->
+    <string name="classes_today_title">Classes Today</string>
+
+    <!-- Attendance Check Screen -->
+    <string name="attendance_check_title">Attendance Check</string>
+
+</resources>

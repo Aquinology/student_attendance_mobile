@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <style name="Platform.Theme.Attendance" parent="Theme.Material3.DayNight">
+        <item name="android:statusBarColor">@color/black30</item>
+    </style>
+
+    <style name="Theme.Attendance" parent="Platform.Theme.Attendance" />
+
+</resources>
