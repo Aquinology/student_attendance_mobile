@@ -14,9 +14,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.attendance.AttendanceApplication
 import com.example.attendance.R
 import com.example.attendance.data.courses
-import com.example.attendance.model.Course
+import com.example.attendance.data.courses.CourseEntity
+import com.example.attendance.data.teachers.TeacherEntity
+import com.example.attendance.domain.CourseModel
 import com.example.attendance.ui.theme.AttendanceTheme
 
 @Composable
@@ -57,7 +60,7 @@ private fun CoursesScreenContent(
 
 @Composable
 private fun CoursesList(
-    courses: List<Course>
+    courses: List<CourseModel>
 ) {
     LazyColumn {
         items(courses) { course ->
@@ -67,17 +70,32 @@ private fun CoursesList(
 }
 
 @Composable
-fun CourseItem(course: Course) {
+fun CourseItem(course: CourseModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
+        val entity1 = TeacherEntity(
+            email = "lkjhgf",
+            password = "ghjkl;",
+            firstName = "sdfgh",
+            lastName = "fghjk"
+        )
+
+        val entity2 = CourseEntity(
+            title = "Course1",
+            teacherId = 1
+        )
+        AttendanceApplication.teacherDao?.insert(entity1)
+        AttendanceApplication.courseDao?.insert(entity2)
+
+        val myCourse = AttendanceApplication.courseDao?.getCourse(1)
         Column(
             modifier = Modifier.weight(1f)
         ) {
             Text(text = course.title, fontWeight = FontWeight.Bold)
-            Text(text = "Students: ${course.teacher}")
+            Text(text = "Students: $myCourse")
         }
     }
 }

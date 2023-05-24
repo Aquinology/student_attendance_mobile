@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.attendance.R
-import com.example.attendance.model.Class
+import com.example.attendance.domain.ClassModel
 import com.example.attendance.ui.components.TopBarContent
 import com.example.attendance.ui.theme.AttendanceTheme
 
@@ -162,7 +162,7 @@ fun rememberTabContent(
 
 @Composable
 private fun SectionContent(
-    content: List<Class>
+    content: List<ClassModel>
 ) {
     LazyColumn {
         items(content) { courseClass ->
@@ -173,7 +173,7 @@ private fun SectionContent(
 
 @Composable
 private fun ContentItem(
-    item: Class,
+    item: ClassModel,
     modifier: Modifier = Modifier
 ) {
     Column(Modifier.padding(horizontal = 16.dp)) {

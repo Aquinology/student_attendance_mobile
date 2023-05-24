@@ -4,13 +4,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import com.example.attendance.data.courses.CoursesRepository
-import com.example.attendance.model.Course
+import com.example.attendance.domain.CourseModel
 import com.example.attendance.data.Result
 import com.example.attendance.data.courses
 
 class FakeCoursesRepository : CoursesRepository {
 
-    override suspend fun getCourse(courseId: Int): Result<Course> {
+    override suspend fun getCourse(courseId: Int): Result<CourseModel> {
         return withContext(Dispatchers.IO) {
             val course = courses.find { it.id == courseId }
             if (course == null) {
@@ -21,7 +21,7 @@ class FakeCoursesRepository : CoursesRepository {
         }
     }
 
-    override suspend fun getTeacherCourses(teacherId: Int): Result<List<Course>> {
+    override suspend fun getTeacherCourses(teacherId: Int): Result<List<CourseModel>> {
         return withContext(Dispatchers.IO) {
             delay(800)
             val teacherCourses = courses.filter { it.teacher.id == teacherId }

@@ -10,13 +10,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.example.attendance.data.classes.ClassesRepository
-import com.example.attendance.model.Class as courseClass
+import com.example.attendance.domain.ClassModel
 import com.example.attendance.data.successOr
+import com.example.attendance.utils.Date
 
 data class DayClassesUiState(
-    val classesYesterday: List<courseClass> = emptyList(),
-    val classesToday: List<courseClass> = emptyList(),
-    val classesTomorrow: List<courseClass> = emptyList(),
+    val classesYesterday: List<ClassModel> = emptyList(),
+    val classesToday: List<ClassModel> = emptyList(),
+    val classesTomorrow: List<ClassModel> = emptyList(),
     val loading: Boolean = false
 )
 
@@ -35,9 +36,9 @@ class DayClassesViewModel(
         _uiState.update { it.copy(loading = true) }
 
         viewModelScope.launch {
-            val classesYesterdayDeferred = async { classesRepository.getDayClasses("01.01.2020") }
-            val classesTodayDeferred = async { classesRepository.getDayClasses("02.01.2020") }
-            val classesTomorrowDeferred = async { classesRepository.getDayClasses("03.01.2020") }
+            val classesYesterdayDeferred = async { classesRepository.getDayClasses(Date(-1)) }
+            val classesTodayDeferred = async { classesRepository.getDayClasses(Date(0)) }
+            val classesTomorrowDeferred = async { classesRepository.getDayClasses(Date(1)) }
 
             val classesYesterday = classesYesterdayDeferred.await().successOr(emptyList())
             val classesToday = classesTodayDeferred.await().successOr(emptyList())

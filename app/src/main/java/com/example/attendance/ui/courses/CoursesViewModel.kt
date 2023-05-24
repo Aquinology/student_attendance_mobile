@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.attendance.data.courses.CoursesRepository
-import com.example.attendance.model.Course
+import com.example.attendance.domain.CourseModel
 import com.example.attendance.utils.ErrorMessage
 import kotlinx.coroutines.flow.*
 import java.util.*
@@ -20,14 +20,14 @@ sealed interface CoursesUiState {
     ) : CoursesUiState
 
     data class HasCourses(
-        val courses: List<Course>,
+        val courses: List<CourseModel>,
         override val isLoading: Boolean,
         override val errorMessages: List<ErrorMessage>
     ) : CoursesUiState
 }
 
 private data class CoursesViewModelState(
-    val courses: List<Course>? = emptyList(),
+    val courses: List<CourseModel>? = emptyList(),
     val isLoading: Boolean = false,
     val errorMessages: List<ErrorMessage> = emptyList()
 ) {

@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -45,6 +46,8 @@ dependencies {
     def activity_compose_version = "1.7.1"
     def navigation_compose_version = "2.6.0-rc01"
     def lifecycle_version = "2.6.1"
+    def room_version = "2.5.1"
+    def stetho_version = "1.5.1"
 
     // Material components
     implementation("com.google.android.material:material:$material_version")
@@ -66,4 +69,11 @@ dependencies {
 
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version")
+
+    // Room
+    implementation("androidx.room:room-runtime:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+
+    // Stetho
+    implementation("com.facebook.stetho:stetho:$stetho_version")
 }

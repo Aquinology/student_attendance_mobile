@@ -13,8 +13,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.attendance.R
-import com.example.attendance.data.students
-import com.example.attendance.model.Student
+import com.example.attendance.data.courseStudents
+import com.example.attendance.domain.StudentModel
 import com.example.attendance.ui.theme.AttendanceTheme
 import com.example.attendance.ui.components.TopBarContent
 
@@ -40,13 +40,12 @@ private fun AttendanceCheckScreenContent() {
 
 @Composable
 private fun AttendanceCheckContent() {
-    StudentList(students = students)
     SaveButton()
 }
 
 @Composable
 private fun StudentList(
-    students: List<Student>
+    students: List<StudentModel>
 ) {
     LazyColumn {
         items(students) { student ->
@@ -59,7 +58,7 @@ private fun StudentList(
 
 @Composable
 private fun StudentCard(
-    student: Student
+    student: StudentModel
 ) {
     Row(
         modifier = Modifier
