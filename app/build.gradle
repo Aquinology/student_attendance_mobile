@@ -44,6 +44,7 @@ dependencies {
     def ui_tooling_version = "1.4.3"
     def activity_compose_version = "1.7.1"
     def navigation_compose_version = "2.6.0-rc01"
+    def lifecycle_version = "2.6.1"
 
     // Material components
     implementation("com.google.android.material:material:$material_version")
@@ -62,4 +63,7 @@ dependencies {
 
     // Add window size utils
     implementation("androidx.compose.material3:material3-window-size-class")
+
+    // Lifecycle
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version")
 }

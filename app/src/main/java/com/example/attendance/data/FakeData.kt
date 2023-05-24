@@ -39,9 +39,9 @@ val thirdTime = Time( 3, "12:55", "14:15")
 // Classes
 val socialPsychologyFirstClass = Class( 1, socialPsychology, "01.01.2020", firstTime)
 val socialPsychologySecondClass = Class( 2, socialPsychology, "01.01.2020", secondTime)
-val socialPsychologyThirdClass = Class( 3, socialPsychology, "04.01.2020", secondTime)
-val personalityPsychologyFirstClass = Class( 4, personalityPsychology, "04.01.2020", thirdTime)
-val personalityPsychologySecondClass = Class( 5, personalityPsychology, "05.01.2020", firstTime)
+val socialPsychologyThirdClass = Class( 3, socialPsychology, "02.01.2020", secondTime)
+val personalityPsychologyFirstClass = Class( 4, personalityPsychology, "02.01.2020", thirdTime)
+val personalityPsychologySecondClass = Class( 5, personalityPsychology, "03.01.2020", firstTime)
 
 val classes = listOf(
     socialPsychologyFirstClass,

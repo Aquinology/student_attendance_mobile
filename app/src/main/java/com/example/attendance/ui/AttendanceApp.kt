@@ -86,13 +86,3 @@ private fun rememberSizeAwareDrawerState(isExpandedScreen: Boolean): DrawerState
         DrawerState(DrawerValue.Closed)
     }
 }
-
-@Composable
-fun rememberContentPaddingForScreen(
-    additionalTop: Dp = 0.dp,
-    excludeTop: Boolean = false
-) =
-    WindowInsets.systemBars
-        .only(if (excludeTop) WindowInsetsSides.Bottom else WindowInsetsSides.Vertical)
-        .add(WindowInsets(top = additionalTop))
-        .asPaddingValues()

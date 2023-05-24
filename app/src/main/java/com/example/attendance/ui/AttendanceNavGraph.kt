@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.attendance.data.AppContainer
 import com.example.attendance.ui.classes_today.ClassesTodayRoute
-import com.example.attendance.ui.classes_today.ClassesTodayViewModel
+import com.example.attendance.ui.classes_today.DayClassesViewModel
 import com.example.attendance.ui.courses.CoursesRoute
 import com.example.attendance.ui.courses.CoursesViewModel
 
@@ -28,13 +28,12 @@ fun AttendanceNavGraph(
         modifier = modifier
     ) {
         composable(AttendanceDestinations.CLASSES_TODAY_ROUTE) {
-            val classesTodayViewModel: ClassesTodayViewModel = viewModel(
-                factory = ClassesTodayViewModel.provideFactory(appContainer.classesRepository)
+            val classesTodayViewModel: DayClassesViewModel = viewModel(
+                factory = DayClassesViewModel.provideFactory(appContainer.classesRepository)
             )
             ClassesTodayRoute(
                 classesTodayViewModel = classesTodayViewModel,
-                isExpandedScreen = isExpandedScreen,
-                openDrawer = openDrawer
+                isExpandedScreen = isExpandedScreen
             )
         }
         composable(AttendanceDestinations.COURSES_ROUTE) {

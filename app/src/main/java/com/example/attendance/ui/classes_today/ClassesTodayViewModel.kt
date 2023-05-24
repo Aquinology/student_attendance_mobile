@@ -13,17 +13,19 @@ import com.example.attendance.data.classes.ClassesRepository
 import com.example.attendance.model.Class as courseClass
 import com.example.attendance.data.successOr
 
-data class ClassesTodayUiState(
+data class DayClassesUiState(
+    val classesYesterday: List<courseClass> = emptyList(),
     val classesToday: List<courseClass> = emptyList(),
+    val classesTomorrow: List<courseClass> = emptyList(),
     val loading: Boolean = false
 )
 
-class ClassesTodayViewModel(
+class DayClassesViewModel(
     private val classesRepository:ClassesRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ClassesTodayUiState(loading = true))
-    val uiState: StateFlow<ClassesTodayUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(DayClassesUiState(loading = true))
+    val uiState: StateFlow<DayClassesUiState> = _uiState.asStateFlow()
 
     init {
         refreshAll()
@@ -33,13 +35,19 @@ class ClassesTodayViewModel(
         _uiState.update { it.copy(loading = true) }
 
         viewModelScope.launch {
-            val classesTodayDeferred = async { classesRepository.getClassesToday("01.01.2020") }
+            val classesYesterdayDeferred = async { classesRepository.getDayClasses("01.01.2020") }
+            val classesTodayDeferred = async { classesRepository.getDayClasses("02.01.2020") }
+            val classesTomorrowDeferred = async { classesRepository.getDayClasses("03.01.2020") }
 
+            val classesYesterday = classesYesterdayDeferred.await().successOr(emptyList())
             val classesToday = classesTodayDeferred.await().successOr(emptyList())
+            val classesTomorrow = classesTomorrowDeferred.await().successOr(emptyList())
 
             _uiState.update {
                 it.copy(
+                    classesYesterday = classesYesterday,
                     classesToday = classesToday,
+                    classesTomorrow = classesTomorrow,
                     loading = false
                 )
             }
@@ -52,7 +60,7 @@ class ClassesTodayViewModel(
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return ClassesTodayViewModel(classesRepository) as T
+                return DayClassesViewModel(classesRepository) as T
             }
         }
     }

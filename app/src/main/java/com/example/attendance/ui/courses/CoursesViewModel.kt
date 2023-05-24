@@ -3,48 +3,62 @@ package com.example.attendance.ui.courses
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import com.example.attendance.data.courses.CoursesRepository
 import com.example.attendance.model.Course
-import com.example.attendance.data.successOr
+import com.example.attendance.utils.ErrorMessage
+import kotlinx.coroutines.flow.*
+import java.util.*
 
-data class CoursesUiState(
-    val courses: List<Course> = emptyList(),
-    val loading: Boolean = false
-)
+sealed interface CoursesUiState {
+
+    val isLoading: Boolean
+    val errorMessages: List<ErrorMessage>
+
+    data class NoCourses(
+        override val isLoading: Boolean,
+        override val errorMessages: List<ErrorMessage>
+    ) : CoursesUiState
+
+    data class HasCourses(
+        val courses: List<Course>,
+        override val isLoading: Boolean,
+        override val errorMessages: List<ErrorMessage>
+    ) : CoursesUiState
+}
+
+private data class CoursesViewModelState(
+    val courses: List<Course>? = emptyList(),
+    val isLoading: Boolean = false,
+    val errorMessages: List<ErrorMessage> = emptyList()
+) {
+    fun toUiState(): CoursesUiState =
+        if (courses == null) {
+            CoursesUiState.NoCourses(
+                isLoading = isLoading,
+                errorMessages = errorMessages
+            )
+        } else {
+            CoursesUiState.HasCourses(
+                courses = courses,
+                isLoading = isLoading,
+                errorMessages = errorMessages
+            )
+        }
+}
 
 class CoursesViewModel(
     private val coursesRepository: CoursesRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CoursesUiState(loading = true))
-    val uiState: StateFlow<CoursesUiState> = _uiState.asStateFlow()
+    private val viewModelState = MutableStateFlow(CoursesViewModelState(isLoading = true))
 
-    init {
-        refreshAll()
-    }
-
-    private fun refreshAll() {
-        _uiState.update { it.copy(loading = true) }
-
-        viewModelScope.launch {
-            val coursesDeferred = async { coursesRepository.getTeacherCourses(1) }
-
-            val courses = coursesDeferred.await().successOr(emptyList())
-
-            _uiState.update {
-                it.copy(
-                    courses = courses,
-                    loading = false
-                )
-            }
-        }
-    }
+    val uiState = viewModelState
+        .map(CoursesViewModelState::toUiState)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            viewModelState.value.toUiState()
+        )
 
     companion object {
         fun provideFactory(

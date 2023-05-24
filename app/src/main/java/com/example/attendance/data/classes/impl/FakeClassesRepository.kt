@@ -33,7 +33,7 @@ class FakeClassesRepository : ClassesRepository {
         }
     }
 
-    override suspend fun getClassesToday(date: String): Result<List<Class>> {
+    override suspend fun getDayClasses(date: String): Result<List<Class>> {
         return withContext(Dispatchers.IO) {
             delay(800)
             val classesToday = classes.filter { it.date == date }

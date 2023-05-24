@@ -9,5 +9,5 @@ interface ClassesRepository {
 
     suspend fun getCourseClasses(courseId: Int): Result<List<Class>>
 
-    suspend fun getClassesToday(date: String): Result<List<Class>>
+    suspend fun getDayClasses(date: String): Result<List<Class>>
 }
