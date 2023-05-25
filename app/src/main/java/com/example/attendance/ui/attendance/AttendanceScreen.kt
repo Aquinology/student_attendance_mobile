@@ -1,4 +1,4 @@
-package com.example.attendance.ui.attendance_check
+package com.example.attendance.ui.attendance
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,13 +13,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.attendance.R
-import com.example.attendance.data.courseStudents
 import com.example.attendance.domain.StudentModel
 import com.example.attendance.ui.theme.AttendanceTheme
 import com.example.attendance.ui.components.TopBarContent
 
 @Composable
-fun AttendanceCheckScreen() {
+fun AttendanceScreen() {
     Row(Modifier.fillMaxSize()) {
         AttendanceCheckScreenContent()
     }
@@ -34,12 +33,12 @@ private fun AttendanceCheckScreenContent() {
             )
         }
     ) {
-        AttendanceCheckContent()
+        AttendanceContent()
     }
 }
 
 @Composable
-private fun AttendanceCheckContent() {
+private fun AttendanceContent() {
     SaveButton()
 }
 
@@ -117,6 +116,6 @@ private fun SaveButton() {
 @Composable
 private fun PreviewAttendanceCheckScreen() {
     AttendanceTheme {
-        AttendanceCheckScreen()
+        AttendanceScreen()
     }
 }

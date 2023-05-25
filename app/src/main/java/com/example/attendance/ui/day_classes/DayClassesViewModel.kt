@@ -1,8 +1,9 @@
-package com.example.attendance.ui.classes_today
+package com.example.attendance.ui.day_classes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.attendance.data.classes.ClassEntity
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,19 +11,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.example.attendance.data.classes.ClassesRepository
-import com.example.attendance.domain.ClassModel
 import com.example.attendance.data.successOr
 import com.example.attendance.utils.Date
 
 data class DayClassesUiState(
-    val classesYesterday: List<ClassModel> = emptyList(),
-    val classesToday: List<ClassModel> = emptyList(),
-    val classesTomorrow: List<ClassModel> = emptyList(),
+    val classesYesterday: List<ClassEntity> = emptyList(),
+    val classesToday: List<ClassEntity> = emptyList(),
+    val classesTomorrow: List<ClassEntity> = emptyList(),
     val loading: Boolean = false
 )
 
 class DayClassesViewModel(
-    private val classesRepository:ClassesRepository
+    private val classesRepository: ClassesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DayClassesUiState(loading = true))

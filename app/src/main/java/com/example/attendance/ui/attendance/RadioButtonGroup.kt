@@ -1,4 +1,4 @@
-package com.example.attendance.ui.attendance_check
+package com.example.attendance.ui.attendance
 
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.layout.Row

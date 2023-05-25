@@ -3,62 +3,54 @@ package com.example.attendance.ui.courses
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.attendance.data.courses.CourseEntity
 import com.example.attendance.data.courses.CoursesRepository
-import com.example.attendance.domain.CourseModel
-import com.example.attendance.utils.ErrorMessage
-import kotlinx.coroutines.flow.*
-import java.util.*
+import com.example.attendance.data.successOr
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-sealed interface CoursesUiState {
-
-    val isLoading: Boolean
-    val errorMessages: List<ErrorMessage>
-
-    data class NoCourses(
-        override val isLoading: Boolean,
-        override val errorMessages: List<ErrorMessage>
-    ) : CoursesUiState
-
-    data class HasCourses(
-        val courses: List<CourseModel>,
-        override val isLoading: Boolean,
-        override val errorMessages: List<ErrorMessage>
-    ) : CoursesUiState
-}
-
-private data class CoursesViewModelState(
-    val courses: List<CourseModel>? = emptyList(),
-    val isLoading: Boolean = false,
-    val errorMessages: List<ErrorMessage> = emptyList()
-) {
-    fun toUiState(): CoursesUiState =
-        if (courses == null) {
-            CoursesUiState.NoCourses(
-                isLoading = isLoading,
-                errorMessages = errorMessages
-            )
-        } else {
-            CoursesUiState.HasCourses(
-                courses = courses,
-                isLoading = isLoading,
-                errorMessages = errorMessages
-            )
-        }
-}
+data class CoursesUiState(
+    val courses: List<CourseEntity> = emptyList(),
+    val loading: Boolean = false
+)
 
 class CoursesViewModel(
     private val coursesRepository: CoursesRepository
 ) : ViewModel() {
 
-    private val viewModelState = MutableStateFlow(CoursesViewModelState(isLoading = true))
+    private val _uiState = MutableStateFlow(CoursesUiState(loading = true))
+    val uiState: StateFlow<CoursesUiState> = _uiState.asStateFlow()
 
-    val uiState = viewModelState
-        .map(CoursesViewModelState::toUiState)
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            viewModelState.value.toUiState()
-        )
+    fun getCourse(courseId: Int) {
+        viewModelScope.launch {
+            coursesRepository.getCourse(courseId)
+        }
+    }
+
+    init {
+        refreshAll()
+    }
+
+    private fun refreshAll() {
+        _uiState.update { it.copy(loading = true) }
+
+        viewModelScope.launch {
+            val coursesDeferred = async { coursesRepository.getTeacherCourses(1) }
+
+            val courses = coursesDeferred.await().successOr(emptyList())
+
+            _uiState.update {
+                it.copy(
+                    courses = courses,
+                    loading = false
+                )
+            }
+        }
+    }
 
     companion object {
         fun provideFactory(

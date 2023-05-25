@@ -7,12 +7,12 @@ import androidx.room.Query
 interface ClassDao {
 
     @Query("SELECT * FROM classes WHERE id =:classId")
-    fun getClass(classId: Int): ClassEntity
+    suspend fun getClass(classId: Int): ClassEntity
 
     @Query("SELECT * FROM classes WHERE course_id =:courseId")
-    fun getCourseClasses(courseId: Int): List<ClassEntity>
+    suspend fun getCourseClasses(courseId: Int): List<ClassEntity>
 
     @Query("SELECT * FROM classes WHERE date =:date")
-    fun getDayClasses(date: String): List<ClassEntity>
+    suspend fun getDayClasses(date: String): List<ClassEntity>
 
 }

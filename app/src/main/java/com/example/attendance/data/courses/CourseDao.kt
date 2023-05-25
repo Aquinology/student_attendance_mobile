@@ -8,13 +8,10 @@ import androidx.room.Query
 @Dao
 interface CourseDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(item: CourseEntity)
-
     @Query("SELECT * FROM courses WHERE id =:courseId")
-    fun getCourse(courseId: Int): CourseEntity
+    suspend fun getCourse(courseId: Int): CourseEntity
 
     @Query("SELECT * FROM courses WHERE teacher_id =:teacherId")
-    fun getTeacherCourses(teacherId: Int): List<CourseEntity>
+    suspend fun getTeacherCourses(teacherId: Int): List<CourseEntity>
 
 }

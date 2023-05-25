@@ -4,13 +4,11 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun CoursesRoute(
-    coursesViewModel: CoursesViewModel,
-    isExpandedScreen: Boolean,
-    openDrawer: () -> Unit
+    coursesViewModel: CoursesViewModel
 ) {
+    val content = rememberContent(coursesViewModel)
+
     CoursesScreen(
-        coursesViewModel = coursesViewModel,
-        isExpandedScreen = isExpandedScreen,
-        openDrawer = openDrawer
+        content = content
     )
 }

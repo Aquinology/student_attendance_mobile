@@ -7,9 +7,9 @@ import androidx.room.Query
 interface StudentDao {
 
     @Query("SELECT * FROM students WHERE id =:studentId")
-    fun getStudent(studentId: Int): StudentEntity
+    suspend fun getStudent(studentId: Int): StudentEntity
 
     @Query("SELECT * FROM course_students WHERE course_id =:courseId")
-    fun getCourseStudents(courseId: Int): List<CourseStudentsEntity>
+    suspend fun getCourseStudents(courseId: Int): List<CourseStudentsEntity>
 
 }

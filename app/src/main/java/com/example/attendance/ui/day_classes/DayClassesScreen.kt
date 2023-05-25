@@ -1,4 +1,4 @@
-package com.example.attendance.ui.classes_today
+package com.example.attendance.ui.day_classes
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
@@ -13,8 +13,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.attendance.R
-import com.example.attendance.domain.ClassModel
+import com.example.attendance.data.classes
+import com.example.attendance.data.classes.ClassEntity
 import com.example.attendance.ui.components.TopBarContent
+import com.example.attendance.ui.courses.CoursesViewModel
 import com.example.attendance.ui.theme.AttendanceTheme
 
 enum class Sections(@StringRes val titleResId: Int) {
@@ -23,19 +25,17 @@ enum class Sections(@StringRes val titleResId: Int) {
     ClassesTomorrow(R.string.classes_today_section_tomorrow)
 }
 
-class TabContent(val section: Sections, val content: @Composable () -> Unit)
+class Content(val section: Sections, val classes: @Composable () -> Unit)
 
 @Composable
-fun ClassesTodayScreen(
-    tabContent: List<TabContent>,
+fun DayClassesScreen(
+    content: List<Content>,
     currentSection: Sections,
     isExpandedScreen: Boolean,
-    onTabChange: (Sections) -> Unit,
-    snackbarHostState: SnackbarHostState
+    onTabChange: (Sections) -> Unit
 ) {
     AttendanceTheme(){
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             topBar = {
                 TopBarContent(
                     title = stringResource(R.string.classes_today_title)
@@ -43,40 +43,48 @@ fun ClassesTodayScreen(
             }
         ){ innerPadding ->
             val screenModifier = Modifier.padding(innerPadding)
-            ClassesTodayScreenContent(
-                currentSection, isExpandedScreen,
-                onTabChange, tabContent, screenModifier
+            DayClassesScreenContent(
+                content,
+                currentSection,
+                isExpandedScreen,
+                onTabChange,
+                screenModifier
             )
         }
     }
 }
 
 @Composable
-private fun ClassesTodayScreenContent(
+private fun DayClassesScreenContent(
+    content: List<Content>,
     currentSection: Sections,
     isExpandedScreen: Boolean,
     updateSection: (Sections) -> Unit,
-    tabContent: List<TabContent>,
     modifier: Modifier = Modifier
 ) {
-    val selectedTabIndex = tabContent.indexOfFirst { it.section == currentSection }
+    val selectedTabIndex = content.indexOfFirst { it.section == currentSection }
     Column(modifier) {
-        ClassesTodayTabRow(selectedTabIndex, updateSection, tabContent, isExpandedScreen)
+        DayClassesTabRow(
+            content,
+            isExpandedScreen,
+            updateSection,
+            selectedTabIndex
+        )
         Divider(
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
         )
         Box(modifier = Modifier.weight(1f)) {
-            tabContent[selectedTabIndex].content()
+            content[selectedTabIndex].classes()
         }
     }
 }
 
 @Composable
-private fun ClassesTodayTabRow(
-    selectedTabIndex: Int,
+private fun DayClassesTabRow(
+    content: List<Content>,
+    isExpandedScreen: Boolean,
     updateSection: (Sections) -> Unit,
-    tabContent: List<TabContent>,
-    isExpandedScreen: Boolean
+    selectedTabIndex: Int
 ) {
     when (isExpandedScreen) {
         false -> {
@@ -84,7 +92,11 @@ private fun ClassesTodayTabRow(
                 selectedTabIndex = selectedTabIndex,
                 contentColor = MaterialTheme.colorScheme.primary
             ) {
-                ClassesTodayTabRowContent(selectedTabIndex, updateSection, tabContent)
+                DayClassesTabRowContent(
+                    content,
+                    updateSection,
+                    selectedTabIndex
+                )
             }
         }
         true -> {
@@ -93,10 +105,10 @@ private fun ClassesTodayTabRow(
                 contentColor = MaterialTheme.colorScheme.primary,
                 edgePadding = 0.dp
             ) {
-                ClassesTodayTabRowContent(
+                DayClassesTabRowContent(
                     selectedTabIndex = selectedTabIndex,
                     updateSection = updateSection,
-                    tabContent = tabContent,
+                    content = content,
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
             }
@@ -105,13 +117,13 @@ private fun ClassesTodayTabRow(
 }
 
 @Composable
-private fun ClassesTodayTabRowContent(
-    selectedTabIndex: Int,
+private fun DayClassesTabRowContent(
+    content: List<Content>,
     updateSection: (Sections) -> Unit,
-    tabContent: List<TabContent>,
+    selectedTabIndex: Int,
     modifier: Modifier = Modifier
 ) {
-    tabContent.forEachIndexed { index, content ->
+    content.forEachIndexed { index, classes ->
         val colorText = if (selectedTabIndex == index) {
             MaterialTheme.colorScheme.primary
         } else {
@@ -119,11 +131,11 @@ private fun ClassesTodayTabRowContent(
         }
         Tab(
             selected = selectedTabIndex == index,
-            onClick = { updateSection(content.section) },
+            onClick = { updateSection(classes.section) },
             modifier = Modifier.heightIn(min = 48.dp)
         ) {
             Text(
-                text = stringResource(id = content.section.titleResId),
+                text = stringResource(id = classes.section.titleResId),
                 color = colorText,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = modifier.paddingFromBaseline(top = 20.dp)
@@ -133,27 +145,31 @@ private fun ClassesTodayTabRowContent(
 }
 
 @Composable
-fun rememberTabContent(
-    classesTodayViewModel: DayClassesViewModel
-): List<TabContent> {
+fun rememberContent(
+    classesTodayViewModel: DayClassesViewModel,
+    coursesViewModel: CoursesViewModel
+): List<Content> {
 
     val uiState by classesTodayViewModel.uiState.collectAsStateWithLifecycle()
 
-    val classesYesterday = TabContent(Sections.ClassesYesterday) {
+    val classesYesterday = Content(Sections.ClassesYesterday) {
         SectionContent(
-            content = uiState.classesYesterday
+            classes = uiState.classesYesterday,
+            courses = coursesViewModel
         )
     }
 
-    val classesTodaySection = TabContent(Sections.ClassesToday) {
+    val classesTodaySection = Content(Sections.ClassesToday) {
         SectionContent(
-            content = uiState.classesToday
+            classes = uiState.classesToday,
+            courses = coursesViewModel
         )
     }
 
-    val classesTomorrow = TabContent(Sections.ClassesTomorrow) {
+    val classesTomorrow = Content(Sections.ClassesTomorrow) {
         SectionContent(
-            content = uiState.classesTomorrow
+            classes = uiState.classesTomorrow,
+            courses = coursesViewModel
         )
     }
 
@@ -162,18 +178,20 @@ fun rememberTabContent(
 
 @Composable
 private fun SectionContent(
-    content: List<ClassModel>
+    classes: List<ClassEntity>,
+    courses: CoursesViewModel
 ) {
     LazyColumn {
-        items(content) { courseClass ->
-            ContentItem(courseClass)
+        items(classes) { courseClass ->
+            ContentItem(courseClass, courses)
         }
     }
 }
 
 @Composable
 private fun ContentItem(
-    item: ClassModel,
+    courseClass: ClassEntity,
+    courses: CoursesViewModel,
     modifier: Modifier = Modifier
 ) {
     Column(Modifier.padding(horizontal = 16.dp)) {
@@ -181,14 +199,14 @@ private fun ContentItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = item.time.start_time + "\n" + item.time.end_time,
+                text = "10:00" + "\n" + "11:00",
                 modifier = Modifier
                     .padding(16.dp)
                     .weight(1f),
                 style = MaterialTheme.typography.titleSmall
             )
             Text(
-                text = item.course.title,
+                text = courses.getCourse(courseClass.courseId).toString(),
                 modifier = Modifier
                     .padding(16.dp)
                     .weight(3f),

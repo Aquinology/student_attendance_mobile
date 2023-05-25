@@ -5,62 +5,88 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.attendance.AttendanceApplication
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.rememberImagePainter
+import com.example.attendance.AttendanceApplication.Companion.retrofit
 import com.example.attendance.R
-import com.example.attendance.data.courses
+import com.example.attendance.data.ActivityResponseModel
+import com.example.attendance.data.api.ActivityApi
 import com.example.attendance.data.courses.CourseEntity
-import com.example.attendance.data.teachers.TeacherEntity
-import com.example.attendance.domain.CourseModel
+import com.example.attendance.ui.components.TopBarContent
 import com.example.attendance.ui.theme.AttendanceTheme
+
+class Content(val courses: List<CourseEntity>)
 
 @Composable
 fun CoursesScreen(
-    coursesViewModel: CoursesViewModel,
-    isExpandedScreen: Boolean,
-    openDrawer: () -> Unit
+    content: Content
 ) {
-    Row(Modifier.fillMaxSize()) {
-        CoursesScreenContent(
-            coursesViewModel = coursesViewModel,
-            isExpandedScreen = isExpandedScreen,
-            openDrawer = openDrawer
-        )
+    AttendanceTheme {
+        Row(Modifier.fillMaxSize()) {
+            CoursesScreenContent(
+                content = content
+            )
+        }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CoursesScreenContent(
-    coursesViewModel: CoursesViewModel,
-    isExpandedScreen: Boolean,
-    openDrawer: () -> Unit
+    content: Content
 ) {
     Scaffold(
         topBar = {
-            CoursesTopAppBar(
-                isExpandedScreen = isExpandedScreen,
-                openDrawer = openDrawer
+            TopBarContent(
+                title ="Random Dog Image"
             )
         }
     ) {
-        CoursesList(
-            courses = courses
-        )
+        val api = retrofit.create(ActivityApi::class.java)
+        RandomDog(api)
+        //CoursesList(
+            //courses = content.courses
+        //)
     }
+}
+
+@Composable
+    fun RandomDog(api: ActivityApi) {
+    var response by remember { mutableStateOf<ActivityResponseModel?>(null) }
+
+        LaunchedEffect(Unit) {
+            try {
+                val result = api.getRandomImage()
+                if (result.status == "success") {
+                    response = result
+                }
+            } catch (e: Exception) {
+                // Обработка ошибки
+            }
+        }
+
+        response?.let { data ->
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column {
+                    Image(
+                        painter = rememberImagePainter(data.message),
+                        contentDescription = "Random Dog Image"
+                    )
+                }
+            }
+        }
 }
 
 @Composable
 private fun CoursesList(
-    courses: List<CourseModel>
+    courses: List<CourseEntity>
 ) {
     LazyColumn {
         items(courses) { course ->
@@ -70,79 +96,39 @@ private fun CoursesList(
 }
 
 @Composable
-fun CourseItem(course: CourseModel) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        val entity1 = TeacherEntity(
-            email = "lkjhgf",
-            password = "ghjkl;",
-            firstName = "sdfgh",
-            lastName = "fghjk"
-        )
-
-        val entity2 = CourseEntity(
-            title = "Course1",
-            teacherId = 1
-        )
-        AttendanceApplication.teacherDao?.insert(entity1)
-        AttendanceApplication.courseDao?.insert(entity2)
-
-        val myCourse = AttendanceApplication.courseDao?.getCourse(1)
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(text = course.title, fontWeight = FontWeight.Bold)
-            Text(text = "Students: $myCourse")
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun CoursesTopAppBar(
-    isExpandedScreen: Boolean,
-    openDrawer: () -> Unit,
-    topAppBarState: TopAppBarState = rememberTopAppBarState(),
-    scrollBehavior: TopAppBarScrollBehavior? =
-        TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
+fun CourseItem(
+    course: CourseEntity,
+    modifier: Modifier = Modifier
 ) {
-    val title = stringResource(id = R.string.courses_title)
-    CenterAlignedTopAppBar(
-        title = {
-            Image(
-                painter = painterResource(R.drawable.ic_attendance_wordmark),
-                contentDescription = title,
-                contentScale = ContentScale.Inside,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+    Column(Modifier.padding(horizontal = 16.dp)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = course.title,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(20.dp)
+                    .padding(16.dp)
+                    .weight(1f),
+                style = MaterialTheme.typography.titleMedium
             )
-        },
-        navigationIcon = {
-            if (!isExpandedScreen) {
-                IconButton(onClick = openDrawer) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_menu_for_navigation),
-                        contentDescription = stringResource(R.string.cd_open_navigation_drawer),
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
-        },
-        scrollBehavior = scrollBehavior
-    )
+        }
+        Divider(
+            modifier = modifier.padding(start = 8.dp, top = 8.dp, bottom = 8.dp),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+        )
+    }
 }
 
-@Preview(
-    name = "Full Preview",
-    showSystemUi = true
-)
 @Composable
-private fun PreviewCoursesContent() {
-    AttendanceTheme {
-    }
+fun rememberContent(
+    coursesViewModel: CoursesViewModel
+): Content {
+
+    val uiState by coursesViewModel.uiState.collectAsStateWithLifecycle()
+
+    val courses = uiState.courses
+
+    return Content(
+        courses = courses
+    )
 }

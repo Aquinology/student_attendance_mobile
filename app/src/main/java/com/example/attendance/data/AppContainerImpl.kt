@@ -1,16 +1,11 @@
 package com.example.attendance.data
 
-import android.content.Context
+import com.example.attendance.AttendanceApplication
 import com.example.attendance.data.attendance.AttendanceRepository
-import com.example.attendance.data.attendance.impl.FakeAttendanceRepository
 import com.example.attendance.data.classes.ClassesRepository
-import com.example.attendance.data.classes.impl.FakeClassesRepository
 import com.example.attendance.data.courses.CoursesRepository
-import com.example.attendance.data.courses.impl.FakeCoursesRepository
 import com.example.attendance.data.students.StudentsRepository
-import com.example.attendance.data.students.impl.FakeStudentsRepository
 import com.example.attendance.data.teachers.TeachersRepository
-import com.example.attendance.data.teachers.impl.FakeTeachersRepository
 
 interface AppContainer {
     val attendanceRepository: AttendanceRepository
@@ -20,26 +15,26 @@ interface AppContainer {
     val teachersRepository: TeachersRepository
 }
 
-class AppContainerImpl(private val applicationContext: Context) : AppContainer {
+class AppContainerImpl() : AppContainer {
 
     override val attendanceRepository: AttendanceRepository by lazy {
-        FakeAttendanceRepository()
+        AttendanceApplication.attendanceDao?.let { AttendanceRepository(it) }!!
     }
 
     override val classesRepository: ClassesRepository by lazy {
-        FakeClassesRepository()
+        AttendanceApplication.classDao?.let { ClassesRepository(it) }!!
     }
 
     override val coursesRepository: CoursesRepository by lazy {
-        FakeCoursesRepository()
+        AttendanceApplication.courseDao?.let { CoursesRepository(it) }!!
     }
 
     override val studentsRepository: StudentsRepository by lazy {
-        FakeStudentsRepository()
+        AttendanceApplication.studentDao?.let { StudentsRepository(it) }!!
     }
 
     override val teachersRepository: TeachersRepository by lazy {
-        FakeTeachersRepository()
+        AttendanceApplication.teacherDao?.let { TeachersRepository(it) }!!
     }
 
 }
