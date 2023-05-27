@@ -42,15 +42,15 @@ private fun CoursesScreenContent(
     Scaffold(
         topBar = {
             TopBarContent(
-                title ="Random Dog Image"
+                title = stringResource(R.string.courses_title)
             )
         }
     ) {
-        val api = retrofit.create(ActivityApi::class.java)
-        RandomDog(api)
-        //CoursesList(
-            //courses = content.courses
-        //)
+        //val api = retrofit.create(ActivityApi::class.java)
+        //RandomDog(api)
+        CoursesList(
+            courses = content.courses
+        )
     }
 }
 

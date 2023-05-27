@@ -15,9 +15,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.attendance.R
 import com.example.attendance.data.classes
 import com.example.attendance.data.classes.ClassEntity
+import com.example.attendance.domain.ClassModel
 import com.example.attendance.ui.components.TopBarContent
 import com.example.attendance.ui.courses.CoursesViewModel
 import com.example.attendance.ui.theme.AttendanceTheme
+import com.example.attendance.utils.Date
 
 enum class Sections(@StringRes val titleResId: Int) {
     ClassesYesterday(R.string.classes_today_section_yesterday),
@@ -154,21 +156,21 @@ fun rememberContent(
 
     val classesYesterday = Content(Sections.ClassesYesterday) {
         SectionContent(
-            classes = uiState.classesYesterday,
+            classes = classes.filter { it.date == Date(-1) },
             courses = coursesViewModel
         )
     }
 
     val classesTodaySection = Content(Sections.ClassesToday) {
         SectionContent(
-            classes = uiState.classesToday,
+            classes = classes.filter { it.date == Date(0) },
             courses = coursesViewModel
         )
     }
 
     val classesTomorrow = Content(Sections.ClassesTomorrow) {
         SectionContent(
-            classes = uiState.classesTomorrow,
+            classes = classes.filter { it.date == Date(1) },
             courses = coursesViewModel
         )
     }
@@ -178,7 +180,7 @@ fun rememberContent(
 
 @Composable
 private fun SectionContent(
-    classes: List<ClassEntity>,
+    classes: List<ClassModel>,
     courses: CoursesViewModel
 ) {
     LazyColumn {
@@ -190,7 +192,7 @@ private fun SectionContent(
 
 @Composable
 private fun ContentItem(
-    courseClass: ClassEntity,
+    courseClass: ClassModel,
     courses: CoursesViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -199,14 +201,14 @@ private fun ContentItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "10:00" + "\n" + "11:00",
+                text = courseClass.time.start_time + "\n" + courseClass.time.end_time,
                 modifier = Modifier
                     .padding(16.dp)
                     .weight(1f),
                 style = MaterialTheme.typography.titleSmall
             )
             Text(
-                text = courses.getCourse(courseClass.courseId).toString(),
+                text = courseClass.course.title,
                 modifier = Modifier
                     .padding(16.dp)
                     .weight(3f),

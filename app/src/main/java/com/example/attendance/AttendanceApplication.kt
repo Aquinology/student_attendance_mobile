@@ -18,21 +18,6 @@ class AttendanceApplication : Application() {
 
     lateinit var container : AppContainer
 
-    companion object {
-        lateinit var retrofit: Retrofit
-            private set
-
-        fun getApi(): ActivityApi {
-            return retrofit.create(ActivityApi::class.java)
-        }
-
-        var teacherDao: TeacherDao? = null
-        var studentDao: StudentDao? = null
-        var courseDao: CourseDao? = null
-        var classDao: ClassDao? = null
-        var attendanceDao: AttendanceDao? = null
-    }
-
     override fun onCreate() {
         super.onCreate()
         container = AppContainerImpl()
@@ -55,5 +40,16 @@ class AttendanceApplication : Application() {
         attendanceDao = db.attendanceDao
 
         Stetho.initializeWithDefaults(this)
+    }
+
+    companion object {
+        lateinit var retrofit: Retrofit
+            private set
+
+        var teacherDao: TeacherDao? = null
+        var studentDao: StudentDao? = null
+        var courseDao: CourseDao? = null
+        var classDao: ClassDao? = null
+        var attendanceDao: AttendanceDao? = null
     }
 }

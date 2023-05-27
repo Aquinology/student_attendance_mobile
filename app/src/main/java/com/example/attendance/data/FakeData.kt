@@ -31,7 +31,7 @@ val personalityPsychology = CourseModel( 2, "Personality Psychology", elena)
 val courses = listOf(socialPsychology, personalityPsychology)
 
 //Times
-val firstTime = Time( 1, "9:30", "10:50")
+val firstTime = Time( 1, "09:30", "10:50")
 val secondTime = Time( 2, "11:05", "12:25")
 val thirdTime = Time( 3, "12:55", "14:15")
 
